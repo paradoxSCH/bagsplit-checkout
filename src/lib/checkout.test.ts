@@ -7,7 +7,10 @@ import {
   demoOrders,
   getCheckoutItem,
   getOrdersForCreator,
+  listOrders,
+  resetMockData,
   saveMockCheckout,
+  saveMockOrder,
   summarizeOrders,
 } from "./checkout";
 
@@ -101,5 +104,30 @@ describe("checkout domain", () => {
     expect(order.status).toBe("paid");
     expect(order.amountPaid).toBeGreaterThan(0);
     expect(order.receiptUrl).toContain(order.id);
+  });
+
+  it("resets demo checkout and order state", () => {
+    saveMockCheckout({
+      creatorWallet: "CreatorWallet1111111111111111111111111111",
+      creatorProjectName: "BagSplit Studio",
+      title: "Temporary Checkout",
+      description: "A temporary checkout that should be cleared by demo reset.",
+      priceAmount: 3,
+      priceTokenMint: "BSPAYMint111111111111111111111111111111",
+      priceTokenSymbol: "BSPAY",
+      deliveryType: "custom",
+      inventoryLimit: null,
+      expiresAt: null,
+    });
+    saveMockOrder({
+      checkoutItemId: "creator-pass",
+      buyerWallet: "FanWalletDemo111111111111111111111111111111",
+    });
+
+    const result = resetMockData();
+
+    expect(result).toEqual({ checkoutCount: 2, orderCount: 2 });
+    expect(listOrders()).toHaveLength(2);
+    expect(getCheckoutItem("temporary-checkout").id).toBe("creator-pass");
   });
 });

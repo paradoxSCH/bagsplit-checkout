@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("mock checkout happy path", async ({ page }) => {
+  await page.request.post("/api/demo/reset");
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /creator-token checkout links/i })).toBeVisible();
 

@@ -136,6 +136,16 @@ export function listOrders() {
   return orders;
 }
 
+export function resetMockData() {
+  checkoutItems.splice(0, checkoutItems.length, ...demoCheckoutItems);
+  orders.splice(0, orders.length, ...demoOrders);
+
+  return {
+    checkoutCount: checkoutItems.length,
+    orderCount: orders.length,
+  };
+}
+
 export function summarizeOrders(orders: Order[]) {
   return orders.reduce(
     (summary, order) => ({

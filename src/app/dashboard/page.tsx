@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ResetDemoButton } from "@/components/checkout/ResetDemoButton";
 import { demoCheckoutItems, getOrdersForCreator, summarizeOrders } from "@/lib/checkout";
 
 export default function DashboardPage() {
@@ -22,6 +23,9 @@ export default function DashboardPage() {
         <section>
           <p className="text-sm font-medium uppercase tracking-[0.18em] text-emerald-700">Creator dashboard</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight">Orders and revenue from token-powered checkout.</h1>
+          <div className="mt-5">
+            <ResetDemoButton />
+          </div>
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
