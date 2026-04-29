@@ -12,15 +12,27 @@ afterEach(() => {
 
 describe("BagsHealthPanel", () => {
   it("shows a connected state when the auth probe succeeds", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ connected: true }),
-    });
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ connected: true }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          connected: true,
+          tokenCount: 1,
+          sampleTokens: [{ token: "TokenMint111111111111111111111111111111111", symbol: "BAGS", name: "Bags Demo" }],
+        }),
+      });
 
     render(<BagsHealthPanel />);
 
     expect(screen.getByText("Checking")).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText("Connected")).toBeInTheDocument());
+    expect(await screen.findByText(/read 1 bags token records/i)).toBeInTheDocument();
+    expect(screen.getByText("BAGS")).toBeInTheDocument();
     expect(screen.queryByText(/private-user/i)).not.toBeInTheDocument();
   });
 

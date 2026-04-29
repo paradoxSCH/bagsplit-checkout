@@ -26,6 +26,8 @@ BagSplit Checkout turns Bags creator tokens into a checkout layer. Creators can 
 
 Bags gives creators token launch, trading, and fee-sharing primitives. BagSplit Checkout adds the missing commerce layer: a reason for creator tokens to be used after launch.
 
+The demo uses the Bags SDK server-side to verify API access and read a sanitized token leaderboard snapshot. API keys and creator profile payloads are never returned to the browser.
+
 ## Demo Flow
 
 1. Creator creates a checkout item.
@@ -33,6 +35,7 @@ Bags gives creators token launch, trading, and fee-sharing primitives. BagSplit 
 3. Fan opens the checkout and pays.
 4. The app generates an order receipt.
 5. Creator sees the order in the dashboard.
+6. Homepage shows live Bags integration health and ecosystem snapshot status.
 
 ## Image Prompt
 

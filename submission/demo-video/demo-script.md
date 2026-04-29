@@ -13,17 +13,19 @@ BagSplit Checkout lets creators create token-powered checkout links for digital 
 ## 3. Demo Flow
 
 1. Open the homepage and explain the Payments focus.
-2. Click `Create checkout`.
-3. Show the prefilled creator checkout form.
-4. Create or open the generated checkout.
-5. Simulate a fan payment.
-6. Show the receipt with payment signature placeholder.
-7. Open the creator dashboard and show orders / mock volume.
+2. Point out the live Bags connection and token leaderboard snapshot.
+3. Click `Create checkout`.
+4. Show the prefilled creator checkout form.
+5. Create or open the generated checkout.
+6. Simulate a fan payment.
+7. Show the receipt with payment signature placeholder.
+8. Open the creator dashboard and show orders / mock volume.
 
 ## 4. Bags Integration Talking Points
 
 - Bags API Key is loaded server-side through `.env.local`.
 - The readiness, status, and auth probe endpoints expose integration health without returning secrets or account profile data.
+- The ecosystem snapshot endpoint reads Bags token leaderboard data and returns only sanitized token summaries.
 - BSPAY is the planned project token for the demo checkout flow.
 - Real payment verification can be connected at the existing checkout and receipt boundary.
 

@@ -49,6 +49,14 @@ type BagsAuthClient = {
   };
 };
 
+type BagsEcosystemClient = {
+  state: {
+    getTopTokensByLifetimeFees: () => Promise<unknown[]>;
+  };
+};
+
+type UnknownRecord = Record<string, unknown>;
+
 export async function checkBagsAuth(client: BagsAuthClient = createBagsSdk()) {
   try {
     await client.auth.me();
@@ -75,4 +83,41 @@ export function createBagsSdk() {
 
   const connection = new Connection(env.data.NEXT_PUBLIC_SOLANA_RPC_URL, "processed");
   return new BagsSDK(env.data.BAGS_API_KEY, connection, "processed");
+}
+
+export async function getBagsEcosystemSnapshot(client: BagsEcosystemClient = createBagsSdk()) {
+  try {
+    const tokens = await client.state.getTopTokensByLifetimeFees();
+
+    return {
+      checked: true,
+      connected: true,
+      tokenCount: tokens.length,
+      sampleTokens: tokens.slice(0, 3).map(toSafeTokenSummary),
+    };
+  } catch (error) {
+    return {
+      checked: true,
+      connected: false,
+      tokenCount: 0,
+      sampleTokens: [],
+      error: error instanceof Error ? error.name : "BagsEcosystemError",
+    };
+  }
+}
+
+function toSafeTokenSummary(value: unknown) {
+  const item = isRecord(value) ? value : {};
+  const tokenInfo = isRecord(item.tokenInfo) ? item.tokenInfo : {};
+
+  return {
+    token: typeof item.token === "string" ? item.token : "unknown",
+    symbol: typeof tokenInfo.symbol === "string" ? tokenInfo.symbol : null,
+    name: typeof tokenInfo.name === "string" ? tokenInfo.name : null,
+    lifetimeFees: typeof item.lifetimeFees === "string" ? item.lifetimeFees : null,
+  };
+}
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null;
 }

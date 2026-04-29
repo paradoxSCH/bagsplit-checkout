@@ -1,6 +1,12 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { bagsDefaultTokenPlan, checkBagsAuth, getBagsIntegrationStatus, getBagsServerEnv } from "./bags";
+import {
+  bagsDefaultTokenPlan,
+  checkBagsAuth,
+  getBagsEcosystemSnapshot,
+  getBagsIntegrationStatus,
+  getBagsServerEnv,
+} from "./bags";
 
 const originalEnv = { ...process.env };
 
@@ -60,5 +66,45 @@ describe("Bags server integration", () => {
 
     expect(status).toEqual({ checked: true, connected: false, error: "TypeError" });
     expect(JSON.stringify(status)).not.toContain("secret failure details");
+  });
+
+  it("summarizes Bags ecosystem tokens without returning creator profile payloads", async () => {
+    const snapshot = await getBagsEcosystemSnapshot({
+      state: {
+        getTopTokensByLifetimeFees: async () => [
+          {
+            token: "TokenMint111111111111111111111111111111111",
+            lifetimeFees: "42.5",
+            tokenInfo: { symbol: "BAGS", name: "Bags Demo", logoURI: "https://example.com/logo.png" },
+            creators: [{ username: "private-creator" }],
+          },
+        ],
+      },
+    });
+
+    expect(snapshot.connected).toBe(true);
+    expect(snapshot.tokenCount).toBe(1);
+    expect(snapshot.sampleTokens[0]).toEqual({
+      token: "TokenMint111111111111111111111111111111111",
+      symbol: "BAGS",
+      name: "Bags Demo",
+      lifetimeFees: "42.5",
+    });
+    expect(JSON.stringify(snapshot)).not.toContain("private-creator");
+    expect(JSON.stringify(snapshot)).not.toContain("logoURI");
+  });
+
+  it("sanitizes Bags ecosystem failures", async () => {
+    const snapshot = await getBagsEcosystemSnapshot({
+      state: {
+        getTopTokensByLifetimeFees: async () => {
+          throw new Error("private upstream details");
+        },
+      },
+    });
+
+    expect(snapshot.connected).toBe(false);
+    expect(snapshot.error).toBe("Error");
+    expect(JSON.stringify(snapshot)).not.toContain("private upstream details");
   });
 });

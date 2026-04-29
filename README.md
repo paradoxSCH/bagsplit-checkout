@@ -46,6 +46,7 @@ npm run check
 - `src/app/api/ready/route.ts`: safe readiness endpoint
 - `src/app/api/bags/status/route.ts`: safe Bags integration status endpoint
 - `src/app/api/bags/auth/route.ts`: safe Bags auth connectivity probe
+- `src/app/api/bags/ecosystem/route.ts`: sanitized Bags token leaderboard snapshot
 - `submission/`: public submission assets and demo script
 
 ## Demo Flow
@@ -60,4 +61,5 @@ npm run check
 
 - Bags API 文档显示所有请求都需要 `x-api-key`。
 - The Bags API key is only read server-side and is never returned by API responses.
-- The current demo uses mock checkout and order data while preserving the integration boundary for real Bags and Solana payment verification.
+- The homepage reads Bags auth and token leaderboard status through server-side SDK routes, then displays sanitized health and ecosystem data.
+- The current checkout/payment flow uses mock order data while preserving the integration boundary for real Bags and Solana payment verification.
