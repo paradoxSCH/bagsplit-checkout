@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { createCheckoutInputSchema, createMockCheckout, demoCheckoutItems } from "@/lib/checkout";
+import { createCheckoutInputSchema, listCheckoutItems, saveMockCheckout } from "@/lib/checkout";
 
 export function GET() {
-  return NextResponse.json({ checkouts: demoCheckoutItems });
+  return NextResponse.json({ checkouts: listCheckoutItems() });
 }
 
 export async function POST(request: Request) {
@@ -14,5 +14,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid checkout input", issues: parsed.error.issues }, { status: 400 });
   }
 
-  return NextResponse.json({ checkout: createMockCheckout(parsed.data) }, { status: 201 });
+  return NextResponse.json({ checkout: saveMockCheckout(parsed.data) }, { status: 201 });
 }

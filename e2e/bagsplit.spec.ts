@@ -7,6 +7,7 @@ test("mock checkout happy path", async ({ page }) => {
   await page.getByRole("link", { name: "Create checkout" }).click();
   await expect(page.getByRole("heading", { name: /create a token-powered checkout link/i })).toBeVisible();
 
+  await page.getByRole("button", { name: "Create mock checkout" }).click();
   await page.getByRole("link", { name: "Open generated checkout" }).click();
   await expect(page.getByRole("heading", { name: "Creator Launch Room Pass" })).toBeVisible();
 

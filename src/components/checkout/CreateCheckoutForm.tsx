@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { createCheckoutInputSchema, type CreateCheckoutInput } from "@/lib/checkout";
+import { checkoutItemSchema, createCheckoutInputSchema, type CreateCheckoutInput } from "@/lib/checkout";
 
 const initialForm: CreateCheckoutInput = {
   creatorWallet: "BagSplitCreator111111111111111111111111111",
@@ -19,7 +19,9 @@ const initialForm: CreateCheckoutInput = {
 
 export function CreateCheckoutForm() {
   const [form, setForm] = useState<CreateCheckoutInput>(initialForm);
-  const [createdPath, setCreatedPath] = useState("/checkout/creator-pass");
+  const [createdPath, setCreatedPath] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const validation = useMemo(() => createCheckoutInputSchema.safeParse(form), [form]);
   const canSubmit = validation.success;
@@ -28,17 +30,39 @@ export function CreateCheckoutForm() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canSubmit) {
       return;
     }
 
-    const slug = form.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    setCreatedPath(`/checkout/${slug || "creator-pass"}`);
+    setIsSubmitting(true);
+    setApiError("");
+
+    try {
+      const response = await fetch("/api/checkouts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = (await response.json()) as unknown;
+
+      if (!response.ok) {
+        throw new Error("Checkout creation failed.");
+      }
+
+      const parsed = checkoutItemSchema.safeParse((data as { checkout?: unknown }).checkout);
+
+      if (!parsed.success) {
+        throw new Error("Checkout response was invalid.");
+      }
+
+      setCreatedPath(`/checkout/${parsed.data.id}`);
+    } catch {
+      setApiError("Checkout creation is temporarily unavailable. Try again after the local API is running.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -135,17 +159,21 @@ export function CreateCheckoutForm() {
         </p>
       ) : null}
 
+      {apiError ? <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-900">{apiError}</p> : null}
+
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
           className="h-11 rounded-md bg-stone-950 px-5 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-400"
-          disabled={!canSubmit}
+          disabled={!canSubmit || isSubmitting}
         >
-          Create mock checkout
+          {isSubmitting ? "Creating..." : "Create mock checkout"}
         </button>
-        <a href={createdPath} className="text-sm font-medium text-stone-900 underline underline-offset-4">
-          Open generated checkout
-        </a>
+        {createdPath ? (
+          <a href={createdPath} className="text-sm font-medium text-stone-900 underline underline-offset-4">
+            Open generated checkout
+          </a>
+        ) : null}
       </div>
     </form>
   );

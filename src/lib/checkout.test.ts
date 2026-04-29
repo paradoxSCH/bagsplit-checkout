@@ -4,7 +4,9 @@ import {
   createCheckoutInputSchema,
   createMockCheckout,
   demoOrders,
+  getCheckoutItem,
   getOrdersForCreator,
+  saveMockCheckout,
   summarizeOrders,
 } from "./checkout";
 
@@ -59,6 +61,24 @@ describe("checkout domain", () => {
 
     expect(checkout.id).toBe("private-notes-drop");
     expect(checkout.status).toBe("active");
+  });
+
+  it("saves a mock checkout for generated links", () => {
+    const checkout = saveMockCheckout({
+      creatorWallet: "CreatorWallet1111111111111111111111111111",
+      creatorProjectName: "BagSplit Studio",
+      title: "Generated Link Pass",
+      description: "A saved checkout item that can be opened through its generated link.",
+      priceAmount: 10,
+      priceTokenMint: "BSPAYMint111111111111111111111111111111",
+      priceTokenSymbol: "BSPAY",
+      deliveryType: "membership",
+      inventoryLimit: 25,
+      expiresAt: null,
+    });
+
+    expect(checkout.id).toBe("generated-link-pass");
+    expect(getCheckoutItem(checkout.id).title).toBe("Generated Link Pass");
   });
 
   it("summarizes creator orders", () => {

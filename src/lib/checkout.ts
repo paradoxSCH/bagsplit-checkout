@@ -77,6 +77,8 @@ export const demoCheckoutItems: CheckoutItem[] = [
   },
 ];
 
+const checkoutItems: CheckoutItem[] = [...demoCheckoutItems];
+
 export const demoOrders: Order[] = [
   {
     id: "order-1001",
@@ -102,8 +104,12 @@ export const demoOrders: Order[] = [
   },
 ];
 
+export function listCheckoutItems() {
+  return checkoutItems;
+}
+
 export function getCheckoutItem(id: string) {
-  return demoCheckoutItems.find((item) => item.id === id) ?? demoCheckoutItems[0];
+  return checkoutItems.find((item) => item.id === id) ?? demoCheckoutItems[0];
 }
 
 export function getOrder(id: string) {
@@ -111,7 +117,7 @@ export function getOrder(id: string) {
 }
 
 export function getOrdersForCreator(creatorWallet: string) {
-  const creatorCheckoutIds = demoCheckoutItems
+  const creatorCheckoutIds = checkoutItems
     .filter((item) => item.creatorWallet === creatorWallet)
     .map((item) => item.id);
 
@@ -136,6 +142,19 @@ export function createMockCheckout(input: CreateCheckoutInput): CheckoutItem {
     status: "active",
     createdAt: new Date().toISOString(),
   });
+}
+
+export function saveMockCheckout(input: CreateCheckoutInput): CheckoutItem {
+  const checkout = createMockCheckout(input);
+  const existingIndex = checkoutItems.findIndex((item) => item.id === checkout.id);
+
+  if (existingIndex >= 0) {
+    checkoutItems[existingIndex] = checkout;
+  } else {
+    checkoutItems.unshift(checkout);
+  }
+
+  return checkout;
 }
 
 function slugify(value: string) {
