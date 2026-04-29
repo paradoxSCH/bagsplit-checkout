@@ -59,6 +59,18 @@ GitHub Actions runs `npm run check` and the Playwright happy path on pushes and 
 4. Simulate payment.
 5. View the receipt and creator dashboard.
 
+## Deployment
+
+The repo includes `vercel.json` so Vercel uses the same dependency flags as local development.
+
+Set these environment variables in the deployment provider:
+
+- `BAGS_API_KEY`
+- `BAGS_API_BASE_URL`
+- `NEXT_PUBLIC_SOLANA_NETWORK`
+- `NEXT_PUBLIC_SOLANA_RPC_URL`
+- `NEXT_PUBLIC_APP_NAME`
+
 ## Notes
 
 - Bags API 文档显示所有请求都需要 `x-api-key`。
