@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BagSplit Checkout
 
-## Getting Started
+Creator-token checkout links for digital goods, memberships, events, and fan purchases on Bags.
 
-First, run the development server:
+BagSplit Checkout is a runnable hackathon demo that shows how a creator can create a checkout link, share it with fans, simulate token payment, generate a receipt, and review orders in a creator dashboard.
+
+## Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Bags SDK
+- Solana Web3 + Wallet Adapter
+- TanStack Query
+- Zod
+
+## Quick Start
 
 ```bash
+npm install
+copy .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 http://localhost:3000。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Required environment values are listed in `.env.example`. Keep `.env.local` private.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Quality Gates
 
-## Learn More
+```bash
+npm run lint
+npm run test
+npm run build
+npm run check
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Important Paths
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app/page.tsx`: demo landing page
+- `src/app/create/page.tsx`: creator checkout form
+- `src/app/checkout/[id]/page.tsx`: public checkout page
+- `src/app/receipt/[id]/page.tsx`: payment receipt page
+- `src/app/dashboard/page.tsx`: creator order dashboard
+- `src/app/api/ready/route.ts`: safe readiness endpoint
+- `src/app/api/bags/status/route.ts`: safe Bags integration status endpoint
+- `src/app/api/bags/auth/route.ts`: safe Bags auth connectivity probe
+- `submission/`: public submission assets and demo script
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Demo Flow
 
-## Deploy on Vercel
+1. Open the homepage.
+2. Create a checkout item.
+3. Open the public checkout link.
+4. Simulate payment.
+5. View the receipt and creator dashboard.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Bags API 文档显示所有请求都需要 `x-api-key`。
+- The Bags API key is only read server-side and is never returned by API responses.
+- The current demo uses mock checkout and order data while preserving the integration boundary for real Bags and Solana payment verification.

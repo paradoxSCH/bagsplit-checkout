@@ -1,0 +1,35 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { BagsHealthPanel } from "./BagsHealthPanel";
+
+const originalFetch = global.fetch;
+
+afterEach(() => {
+  global.fetch = originalFetch;
+  vi.restoreAllMocks();
+});
+
+describe("BagsHealthPanel", () => {
+  it("shows a connected state when the auth probe succeeds", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ connected: true }),
+    });
+
+    render(<BagsHealthPanel />);
+
+    expect(screen.getByText("Checking")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Connected")).toBeInTheDocument());
+    expect(screen.queryByText(/private-user/i)).not.toBeInTheDocument();
+  });
+
+  it("falls back when the auth probe is unavailable", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
+
+    render(<BagsHealthPanel />);
+
+    await waitFor(() => expect(screen.getByText("Unavailable")).toBeInTheDocument());
+    expect(screen.getByText(/mock checkout data/i)).toBeInTheDocument();
+  });
+});
