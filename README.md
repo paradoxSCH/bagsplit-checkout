@@ -36,6 +36,8 @@ npm run build
 npm run check
 ```
 
+GitHub Actions runs `npm run check` and the Playwright happy path on pushes and pull requests to `master`.
+
 ## Important Paths
 
 - `src/app/page.tsx`: demo landing page
