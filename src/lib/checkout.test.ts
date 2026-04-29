@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   createCheckoutInputSchema,
+  createMockOrder,
   createMockCheckout,
   demoOrders,
   getCheckoutItem,
@@ -88,5 +89,17 @@ describe("checkout domain", () => {
     expect(summary.orderCount).toBe(demoOrders.length);
     expect(summary.paidCount).toBe(demoOrders.length);
     expect(summary.totalVolume).toBeGreaterThan(0);
+  });
+
+  it("creates a paid mock order from a checkout item", () => {
+    const order = createMockOrder({
+      checkoutItemId: "creator-pass",
+      buyerWallet: "FanWalletDemo111111111111111111111111111111",
+    });
+
+    expect(order.checkoutItemId).toBe("creator-pass");
+    expect(order.status).toBe("paid");
+    expect(order.amountPaid).toBeGreaterThan(0);
+    expect(order.receiptUrl).toContain(order.id);
   });
 });

@@ -38,8 +38,14 @@ export const orderSchema = z.object({
   createdAt: z.string().datetime(),
 });
 
+export const createOrderInputSchema = z.object({
+  checkoutItemId: z.string().min(3),
+  buyerWallet: z.string().min(6),
+});
+
 export type CheckoutItem = z.infer<typeof checkoutItemSchema>;
 export type CreateCheckoutInput = z.infer<typeof createCheckoutInputSchema>;
+export type CreateOrderInput = z.infer<typeof createOrderInputSchema>;
 export type Order = z.infer<typeof orderSchema>;
 
 export const demoCheckoutItems: CheckoutItem[] = [
@@ -104,6 +110,8 @@ export const demoOrders: Order[] = [
   },
 ];
 
+const orders: Order[] = [...demoOrders];
+
 export function listCheckoutItems() {
   return checkoutItems;
 }
@@ -113,7 +121,7 @@ export function getCheckoutItem(id: string) {
 }
 
 export function getOrder(id: string) {
-  return demoOrders.find((order) => order.id === id) ?? demoOrders[0];
+  return orders.find((order) => order.id === id) ?? demoOrders[0];
 }
 
 export function getOrdersForCreator(creatorWallet: string) {
@@ -121,7 +129,11 @@ export function getOrdersForCreator(creatorWallet: string) {
     .filter((item) => item.creatorWallet === creatorWallet)
     .map((item) => item.id);
 
-  return demoOrders.filter((order) => creatorCheckoutIds.includes(order.checkoutItemId));
+  return orders.filter((order) => creatorCheckoutIds.includes(order.checkoutItemId));
+}
+
+export function listOrders() {
+  return orders;
 }
 
 export function summarizeOrders(orders: Order[]) {
@@ -155,6 +167,29 @@ export function saveMockCheckout(input: CreateCheckoutInput): CheckoutItem {
   }
 
   return checkout;
+}
+
+export function createMockOrder(input: CreateOrderInput): Order {
+  const checkout = getCheckoutItem(input.checkoutItemId);
+  const timestamp = Date.now();
+
+  return orderSchema.parse({
+    id: `order-${timestamp}`,
+    checkoutItemId: checkout.id,
+    buyerWallet: input.buyerWallet,
+    amountPaid: checkout.priceAmount,
+    paymentTokenMint: checkout.priceTokenMint,
+    paymentSignature: `mock_sig_${checkout.id}_${timestamp}`,
+    status: "paid",
+    receiptUrl: `/receipt/order-${timestamp}`,
+    createdAt: new Date(timestamp).toISOString(),
+  });
+}
+
+export function saveMockOrder(input: CreateOrderInput): Order {
+  const order = createMockOrder(input);
+  orders.unshift(order);
+  return order;
 }
 
 function slugify(value: string) {

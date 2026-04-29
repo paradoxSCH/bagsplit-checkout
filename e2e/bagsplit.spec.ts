@@ -11,7 +11,7 @@ test("mock checkout happy path", async ({ page }) => {
   await page.getByRole("link", { name: "Open generated checkout" }).click();
   await expect(page.getByRole("heading", { name: "Creator Launch Room Pass" })).toBeVisible();
 
-  await page.getByRole("link", { name: "Simulate payment" }).click();
+  await page.getByRole("button", { name: "Simulate payment" }).click();
   await expect(page.getByRole("heading", { name: "Payment confirmed" })).toBeVisible();
 
   await page.getByRole("link", { name: "Creator dashboard" }).click();

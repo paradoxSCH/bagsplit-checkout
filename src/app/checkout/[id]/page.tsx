@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MockPaymentButton } from "@/components/checkout/MockPaymentButton";
 import { getCheckoutItem } from "@/lib/checkout";
 
 export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
@@ -42,12 +43,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
                 Mock payment mode. Phase 4 will replace this with Bags/Solana transaction proof.
               </p>
             </div>
-            <Link
-              href="/receipt/order-1001"
-              className="flex h-11 items-center justify-center rounded-md bg-emerald-400 px-4 text-sm font-semibold text-stone-950 transition hover:bg-emerald-300"
-            >
-              Simulate payment
-            </Link>
+            <MockPaymentButton checkoutItemId={item.id} />
           </aside>
         </section>
       </div>
