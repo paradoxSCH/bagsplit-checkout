@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { DevnetProofVerifier } from "@/components/checkout/DevnetProofVerifier";
 import { getCheckoutItem, getOrder } from "@/lib/checkout";
 
 export default async function ReceiptPage({ params }: { params: Promise<{ id: string }> }) {
@@ -40,6 +41,8 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             </div>
           </dl>
         </section>
+
+        <DevnetProofVerifier defaultSignature={order.paymentSignature} />
       </div>
     </main>
   );

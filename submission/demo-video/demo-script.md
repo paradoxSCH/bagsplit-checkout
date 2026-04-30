@@ -18,8 +18,9 @@ BagSplit Checkout lets creators create token-powered checkout links for digital 
 4. Show the prefilled creator checkout form.
 5. Create or open the generated checkout.
 6. Simulate a fan payment.
-7. Show the receipt with payment signature placeholder.
-8. Open the creator dashboard and show orders / mock volume.
+7. Show the receipt and the devnet transaction proof verifier.
+8. Paste a devnet transaction signature if one is available, or explain that the verifier accepts real devnet signatures without mainnet gas.
+9. Open the creator dashboard and show orders / mock volume.
 
 ## 4. Bags Integration Talking Points
 
@@ -27,7 +28,7 @@ BagSplit Checkout lets creators create token-powered checkout links for digital 
 - The readiness, status, and auth probe endpoints expose integration health without returning secrets or account profile data.
 - The ecosystem snapshot endpoint reads Bags token leaderboard data and returns only sanitized token summaries.
 - BSPAY is the planned project token for the demo checkout flow.
-- Real payment verification can be connected at the existing checkout and receipt boundary.
+- Real Solana devnet signatures can be verified at the receipt boundary without mainnet gas.
 
 ## 5. Closing
 

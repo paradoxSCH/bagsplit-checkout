@@ -49,6 +49,7 @@ GitHub Actions runs `npm run check` and the Playwright happy path on pushes and 
 - `src/app/api/bags/status/route.ts`: safe Bags integration status endpoint
 - `src/app/api/bags/auth/route.ts`: safe Bags auth connectivity probe
 - `src/app/api/bags/ecosystem/route.ts`: sanitized Bags token leaderboard snapshot
+- `src/app/api/solana/proof/route.ts`: Solana devnet transaction signature verifier
 - `submission/`: public submission assets and demo script
 
 ## Demo Flow
@@ -57,7 +58,8 @@ GitHub Actions runs `npm run check` and the Playwright happy path on pushes and 
 2. Create a checkout item.
 3. Open the public checkout link.
 4. Simulate payment.
-5. View the receipt and creator dashboard.
+5. Paste a Solana devnet transaction signature on the receipt to verify chain proof.
+6. View the creator dashboard.
 
 ## Deployment
 
@@ -77,3 +79,4 @@ Set these environment variables in the deployment provider:
 - The Bags API key is only read server-side and is never returned by API responses.
 - The homepage reads Bags auth and token leaderboard status through server-side SDK routes, then displays sanitized health and ecosystem data.
 - The current checkout/payment flow uses mock order data while preserving the integration boundary for real Bags and Solana payment verification.
+- Receipt pages can verify real Solana devnet transaction signatures through the server-side RPC proof endpoint.
