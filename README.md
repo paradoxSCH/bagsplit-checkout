@@ -1,8 +1,17 @@
 # BagSplit Checkout
 
+[中文说明](README.zh-CN.md)
+
 Creator-token checkout links for digital goods, memberships, events, and fan purchases on Bags.
 
-BagSplit Checkout is a runnable hackathon demo that shows how a creator can create a checkout link, share it with fans, simulate token payment, generate a receipt, and review orders in a creator dashboard.
+BagSplit Checkout is a runnable hackathon demo that turns creator tokens into a commerce flow: a creator creates a checkout link, a fan opens the link, payment is simulated, a receipt is generated, and the creator can review orders in a dashboard.
+
+## Hackathon Positioning
+
+- Track: Payments
+- Planned project token: BagSplit Pay (`BSPAY`)
+- Core idea: give Bags creator tokens a practical use case beyond launch and trading
+- Demo status: API-backed mock checkout and order flow, live Bags SDK health checks, sanitized Bags leaderboard snapshot, and Solana devnet transaction proof verification
 
 ## Stack
 
@@ -11,19 +20,20 @@ BagSplit Checkout is a runnable hackathon demo that shows how a creator can crea
 - TypeScript
 - Tailwind CSS 4
 - Bags SDK
-- Solana Web3 + Wallet Adapter
+- Solana Web3
 - TanStack Query
 - Zod
+- Vitest and Playwright
 
 ## Quick Start
 
 ```bash
-npm install
+npm install --legacy-peer-deps --ignore-scripts
 copy .env.example .env.local
 npm run dev
 ```
 
-打开 http://localhost:3000。
+Open http://localhost:3000.
 
 Required environment values are listed in `.env.example`. Keep `.env.local` private.
 
@@ -34,32 +44,40 @@ npm run lint
 npm run test
 npm run build
 npm run check
+npm run test:e2e
 ```
 
 GitHub Actions runs `npm run check` and the Playwright happy path on pushes and pull requests to `master`.
+
+## Demo Flow
+
+1. Open the homepage and view the live Bags integration panel.
+2. Create a checkout item.
+3. Open the generated public checkout link.
+4. Simulate payment through the orders API.
+5. Paste a Solana devnet transaction signature on the receipt to verify chain proof.
+6. View orders and volume in the creator dashboard.
+
+## Bags And Solana Integration
+
+- `src/app/api/bags/status/route.ts`: safe Bags integration status endpoint
+- `src/app/api/bags/auth/route.ts`: server-side Bags auth connectivity probe
+- `src/app/api/bags/ecosystem/route.ts`: sanitized Bags token leaderboard snapshot
+- `src/app/api/solana/proof/route.ts`: Solana devnet transaction signature verifier
+
+The Bags API key is read only on the server and is never returned to the browser. Bags leaderboard data is sanitized before display. Receipt pages can verify real Solana devnet transaction signatures through the server-side proof endpoint.
 
 ## Important Paths
 
 - `src/app/page.tsx`: demo landing page
 - `src/app/create/page.tsx`: creator checkout form
 - `src/app/checkout/[id]/page.tsx`: public checkout page
-- `src/app/receipt/[id]/page.tsx`: payment receipt page
+- `src/app/receipt/[id]/page.tsx`: receipt and devnet proof page
 - `src/app/dashboard/page.tsx`: creator order dashboard
-- `src/app/api/ready/route.ts`: safe readiness endpoint
-- `src/app/api/bags/status/route.ts`: safe Bags integration status endpoint
-- `src/app/api/bags/auth/route.ts`: safe Bags auth connectivity probe
-- `src/app/api/bags/ecosystem/route.ts`: sanitized Bags token leaderboard snapshot
-- `src/app/api/solana/proof/route.ts`: Solana devnet transaction signature verifier
+- `src/app/api/checkouts/route.ts`: checkout item API
+- `src/app/api/orders/route.ts`: order API
+- `src/app/api/demo/reset/route.ts`: demo data reset endpoint
 - `submission/`: public submission assets and demo script
-
-## Demo Flow
-
-1. Open the homepage.
-2. Create a checkout item.
-3. Open the public checkout link.
-4. Simulate payment.
-5. Paste a Solana devnet transaction signature on the receipt to verify chain proof.
-6. View the creator dashboard.
 
 ## Deployment
 
@@ -73,10 +91,8 @@ Set these environment variables in the deployment provider:
 - `NEXT_PUBLIC_SOLANA_RPC_URL`
 - `NEXT_PUBLIC_APP_NAME`
 
-## Notes
+## Current Limits
 
-- Bags API 文档显示所有请求都需要 `x-api-key`。
-- The Bags API key is only read server-side and is never returned by API responses.
-- The homepage reads Bags auth and token leaderboard status through server-side SDK routes, then displays sanitized health and ecosystem data.
-- The current checkout/payment flow uses mock order data while preserving the integration boundary for real Bags and Solana payment verification.
-- Receipt pages can verify real Solana devnet transaction signatures through the server-side RPC proof endpoint.
+- Checkout and order creation use an in-memory mock store for demo speed.
+- Payment is simulated, while receipt proof verification accepts real Solana devnet transaction signatures.
+- The planned `BSPAY` token must still be launched or linked on Bags before final hackathon submission.
